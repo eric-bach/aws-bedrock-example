@@ -6,7 +6,7 @@ from langchain.embeddings import BedrockEmbeddings
 from langchain.vectorstores import Chroma
 
 # load the document and split it into chunks
-loader = TextLoader("state_of_the_union.txt")
+loader = TextLoader("data/text/state_of_the_union.txt")
 documents = loader.load()
 
 # split it into chunks

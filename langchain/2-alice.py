@@ -32,9 +32,10 @@ print(f"Split {len(documents)} documents into {len(chunks)} chunks.")
 
 # create the open-source embedding function
 #embedding_function = BedrockEmbeddings()
+# TODO Bedrock Embeddings don't work properly yet
 embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
-# Clear out the database first
+# clear out the database first
 if os.path.exists(CHROMA_PATH):
     shutil.rmtree(CHROMA_PATH)
 
