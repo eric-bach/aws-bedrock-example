@@ -6,10 +6,21 @@ Contains examples of prompt engineering scripts using Amazon Bedrock and Langcha
 `1-union.py` - Uses Langchain RAG to retrieve response from text document loaded in a Chroma vector DB
 `2-alice.py` - Uses Amazon Bedrock with Langchain RAG to retrieve response from markdown document loaded in a Chroma vector DB
 
+### Setup WSL VS Code
+
+```
+$ sudo apt update
+$ sudo apt install python python3-pip
+$ python -m pip install --upgrade pip
+$ pip install -U pyopenssl cryptography
+$ Edit .bashrc alias to include "alias python='python3'"
+
+```
+
 ### Installation
 
 ```
-$ pip install langchain tqdm unstructured markdown boto3
+$ pip install langchain langchain-community tqdm unstructured "unstructured[pdf]" markdown boto3 
 ```
 
 ## Langchain RAG application
