@@ -1,5 +1,3 @@
 langchain
-unstructured # Document loading
-chromadb # Vector storage
-openai # For embeddings
-tiktoken  # For embeddings
+unstructured
+chromadb
