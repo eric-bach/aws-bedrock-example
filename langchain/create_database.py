@@ -1,9 +1,10 @@
-from langchain.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader
+# https://github.com/pixegami/langchain-rag-tutorial
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.schema import Document
-from langchain.embeddings import BedrockEmbeddings
-from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
-from langchain.vectorstores.chroma import Chroma
+from langchain_community.document_loaders import DirectoryLoader
+from langchain_community.embeddings import BedrockEmbeddings
+from langchain_community.vectorstores.chroma import Chroma
+import boto3
 import os
 import shutil
 
@@ -20,10 +21,11 @@ def main():
     chunks = text_splitter.split_documents(documents)
     print(f"Split {len(documents)} documents into {len(chunks)} chunks.")   
 
-    # create the open-source embedding function
-    # TODO Bedrock Embeddings don't work properly yet
-    #embedding_function = BedrockEmbeddings()
-    embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+    # create the embedding function
+    session = boto3.Session(profile_name='bach-dev', region_name='us-east-1')
+    bedrock_client = session.client(service_name='bedrock-runtime')
+    embedding_function = BedrockEmbeddings(model_id="amazon.titan-embed-text-v1", client=bedrock_client)
+    #embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
     # Clear any existing vector DB
     if os.path.exists(CHROMA_PATH):

@@ -1,10 +1,14 @@
-from langchain.document_loaders import DirectoryLoader
-from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.chat_models import BedrockChat
-from langchain.embeddings import BedrockEmbeddings
+# Demonstrates using langchain with RAG for a markdown file to query for an answer about Alice in Wonderland
+# https://github.com/pixegami/langchain-rag-tutorial
+
+from langchain.llms.bedrock import Bedrock
 from langchain.prompts import ChatPromptTemplate
-from langchain.vectorstores import Chroma
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.chat_models import BedrockChat
+from langchain_community.document_loaders import DirectoryLoader
+from langchain_community.embeddings import BedrockEmbeddings
+from langchain_community.vectorstores import Chroma
+import boto3
 import os
 import shutil
 
@@ -30,10 +34,12 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=100
 chunks = text_splitter.split_documents(documents)
 print(f"Split {len(documents)} documents into {len(chunks)} chunks.")
 
-# create the open-source embedding function
-#embedding_function = BedrockEmbeddings()
-# TODO Bedrock Embeddings don't work properly yet
-embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+# create the embedding function
+session = boto3.Session(profile_name='bach-dev', region_name='us-east-1')
+bedrock_client = session.client(service_name='bedrock-runtime')
+llm = Bedrock(model_id="anthropic.claude-v2", client=bedrock_client, model_kwargs={'max_tokens_to_sample':200})
+embedding_function = BedrockEmbeddings(model_id="amazon.titan-embed-text-v1", client=bedrock_client)
+#embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
 # clear out the database first
 if os.path.exists(CHROMA_PATH):
@@ -60,7 +66,7 @@ prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
 prompt = prompt_template.format(context=context_text, question=query_text)
 print(prompt)
 
-model = BedrockChat(model_id="anthropic.claude-v2", model_kwargs={"temperature": 0.1})
+model = BedrockChat(model_id="anthropic.claude-v2", model_kwargs={"temperature": 0.1}, client=bedrock_client)
 response_text = model.predict(prompt)
 
 sources = [doc.metadata.get("source", None) for doc, _score in results]

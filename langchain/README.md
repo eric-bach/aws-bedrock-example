@@ -2,9 +2,8 @@
 
 Contains examples of prompt engineering scripts using Amazon Bedrock and Langchain with RAG.
 
-`0-compare_embeddings.py` - Demonstrates Langchain evaluator of string pair with Amazon Bedrock embeddings
-`1-union.py` - Uses Langchain RAG to retrieve response from text document loaded in a Chroma vector DB
-`2-alice.py` - Uses Amazon Bedrock with Langchain RAG to retrieve response from markdown document loaded in a Chroma vector DB
+`compare_embeddings.py` - Demonstrates Langchain evaluator of string pair with Amazon Bedrock embeddings
+`alice.py` - Uses Amazon Bedrock with Langchain RAG to retrieve response from markdown document loaded in a Chroma vector DB
 
 ### Setup WSL VS Code
 
@@ -20,7 +19,7 @@ $ Edit .bashrc alias to include "alias python='python3'"
 ### Installation
 
 ```
-$ pip install langchain langchain-community tqdm unstructured "unstructured[pdf]" markdown boto3 
+$ pip install langchain langchain-community tqdm unstructured markdown boto3 
 ```
 
 ## Langchain RAG application
