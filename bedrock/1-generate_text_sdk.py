@@ -7,7 +7,8 @@ prompt_data = "What is the largest city in the world?"
 # a giant man-eating Python, with a hilarious and surprising twist.
 # """
 
-bedrock = boto3.client(service_name='bedrock-runtime')
+session = boto3.Session(profile_name='bach-dev', region_name='us-east-1')
+bedrock = session.client(service_name='bedrock-runtime')
 payload = {
     "prompt": f"\n\nHuman:{prompt_data}\n\nAssistant:",
     "max_tokens_to_sample": 512,

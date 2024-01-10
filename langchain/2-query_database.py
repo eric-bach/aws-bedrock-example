@@ -1,13 +1,12 @@
-import argparse
-from dataclasses import dataclass
-from langchain.llms.bedrock import Bedrock
-from langchain.vectorstores.chroma import Chroma
+# https://github.com/pixegami/langchain-rag-tutorial
+
 from langchain.embeddings import BedrockEmbeddings
-from langchain.chat_models import BedrockChat
 from langchain.prompts import ChatPromptTemplate
-from langchain.memory import ConversationBufferMemory
-from langchain.chains import RetrievalQAWithSourcesChain
-from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
+from langchain_community.chat_models import BedrockChat
+from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
+from langchain_community.vectorstores.chroma import Chroma
+import argparse
+import boto3
 
 CHROMA_PATH = "chroma"
 
@@ -28,10 +27,13 @@ def main():
     args = parser.parse_args()
     query_text = args.query_text
 
+    # create embeddings
+    session = boto3.Session(profile_name='bach-dev', region_name='us-east-1')
+    bedrock_client = session.client(service_name='bedrock-runtime')
+    embedding_function = BedrockEmbeddings(model_id="amazon.titan-embed-text-v1", client=bedrock_client)
+    #embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+
     # prepare the vector DB using cosine similarity - https://github.com/langchain-ai/langchain/issues/10864
-    # TODO Bedrock Embeddings don't work properly yet
-    #embedding_function = BedrockEmbeddings()
-    embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
     db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function, collection_metadata={"hnsw:space": "cosine"})
 
     # query Chroma

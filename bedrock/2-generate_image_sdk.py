@@ -22,7 +22,8 @@ payload = {
 }
 
 # Create the client and invoke the model.
-bedrock = boto3.client(service_name='bedrock-runtime')
+session = boto3.Session(profile_name='bach-dev', region_name='us-east-1')
+bedrock = session.client(service_name='bedrock-runtime')
 body = json.dumps(payload) 
 model_id = "stability.stable-diffusion-xl-v0"
 response = bedrock.invoke_model(

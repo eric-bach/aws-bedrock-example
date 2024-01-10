@@ -1,14 +1,18 @@
-from langchain.llms.bedrock import Bedrock
-from langchain.embeddings import BedrockEmbeddings
+# Demonstrates the cosine similarity between two words
+# https://github.com/pixegami/langchain-rag-tutorial
+
 from langchain.evaluation import load_evaluator
-import os
+from langchain_community.embeddings import BedrockEmbeddings
+import boto3
 
 def main():
-    # Get embedding for a word.
-    embedding_function = BedrockEmbeddings()
-    vector = embedding_function.embed_query("apple")
-    print(f"Vector for 'apple': {vector}")
-    print(f"Vector length: {len(vector)}")
+    # Get embedding for a word
+    session = boto3.Session(profile_name='bach-dev', region_name='us-east-1')
+    bedrock_client = session.client(service_name='bedrock-runtime')
+    embedding_function = BedrockEmbeddings(model_id="amazon.titan-embed-text-v1", client=bedrock_client)
+    #vector = embedding_function.embed_query("apple")
+    #print(f"Vector for 'apple': {vector}")
+    #print(f"Vector length: {len(vector)}")
 
     # Compare vector of two words
     evaluator = load_evaluator("pairwise_embedding_distance", embeddings=embedding_function)
